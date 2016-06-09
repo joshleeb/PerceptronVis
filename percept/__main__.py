@@ -33,7 +33,7 @@ def main():
     random.seed(int(time.time() * 10**6))
     points = point.generate_points(NUM_POINTS, BOUNDS)
     classification_split = generate_classification_split_line(BOUNDS)
-    percept = perceptron.Perceptron()
+    percept = perceptron.Perceptron(0.25, 0.50, -0.50)
     iteration = 1
 
     for pt in points:
@@ -42,27 +42,31 @@ def main():
     while not perceptron.is_classified(percept, points):
         for pt in points:
             percept.train(int(pt.classification), pt.x, pt.y)
+
+        boundary_fn = percept.get_plot_fn()
+
+        fig, ax = plt.subplots(figsize=(8, 8))
+
+        ax.set_xlim(BOUNDS[0])
+        ax.set_ylim(BOUNDS[1])
+        ax.set_title('N={}, Iteration {}, W={}'.format(
+            NUM_POINTS, iteration, percept.get_weights()
+        ))
+
+        ax.add_line(generate_line(
+            ax, classification_split[0], classification_split[1], 'cyan', '--'
+        ))
+        ax.add_line(generate_line(ax, (0, boundary_fn(0)), (1, boundary_fn(1))))
+
+        ax.scatter(
+            [p.x for p in points], [p.y for p in points],
+            c=[p.get_color(COLOR_CLASSIFICATIONS) for p in points], s=30
+        )
+
+        plt.savefig('iteration{}.png'.format(iteration))
         iteration += 1
 
-    boundary_fn = percept.get_plot_fn()
-
-    fig, ax = plt.subplots(figsize=(8, 8))
-
-    ax.set_title('N={}, Iteration {}, W={}'.format(NUM_POINTS, percept.get_weights(), 1))
-    ax.set_xlim(BOUNDS[0])
-    ax.set_ylim(BOUNDS[1])
-
-    ax.add_line(generate_line(
-        ax, classification_split[0], classification_split[1], 'cyan', '--'
-    ))
-    ax.add_line(generate_line(ax, (0, boundary_fn(0)), (1, boundary_fn(1))))
-
-    ax.scatter(
-        [p.x for p in points], [p.y for p in points],
-        c=[p.get_color(COLOR_CLASSIFICATIONS) for p in points], s=50
-    )
-
-    plt.show()
+    print(iteration)
 
 
 if __name__ == '__main__':
