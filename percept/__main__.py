@@ -1,11 +1,18 @@
+import os
 import perceptron
 import plot
 import point
 import random
+import sys
 import time
 
 NUM_POINTS = 100
 BOUNDS = ((-1, 1), (-1, 1))
+
+
+def usage():
+    print('Usage:')
+    print('python3 percept <directory path>')
 
 
 def generate_class_boundary_line(bounds):
@@ -26,10 +33,11 @@ def save_plot(path, iteration, weights, class_boundary, points):
         'N={}, Iteration {}, W={}'.format(NUM_POINTS, iteration, weights),
         class_boundary, weights, points, BOUNDS
     )
-    plt.savefig('iteration{}.png'.format(iteration))
+    plt.savefig(os.path.join(path, 'iteration{}.png'.format(iteration)))
 
 
-def main():
+def main(path='./'):
+    random.seed(int(time.time() * 10**6))
     points = point.generate_points(NUM_POINTS, BOUNDS)
     class_boundary = generate_class_boundary_line(BOUNDS)
     percept = perceptron.Perceptron()
@@ -39,10 +47,7 @@ def main():
     for pt in points:
         pt.apply_classification(class_boundary)
 
-    save_plot(
-        'iteration{}'.format(iteration), iteration, percept.get_weights(),
-        class_boundary, points
-    )
+    save_plot(path, iteration, percept.get_weights(), class_boundary, points)
 
     # As long as the perceptron is not perfectly classifying points, keep
     # training with training data.
@@ -52,12 +57,16 @@ def main():
         for pt in points:
             percept.train(int(pt.classification), pt.x, pt.y)
 
-        save_plot(
-            'iteration{}'.format(iteration), iteration, percept.get_weights(),
-            class_boundary, points
-        )
+        save_plot(path, iteration, percept.get_weights(), class_boundary, points)
 
 
 if __name__ == '__main__':
-    random.seed(int(time.time() * 10**6))
-    main()
+    if len(sys.argv) != 2:
+        usage()
+        exit(1)
+
+    path = sys.argv[1]
+    if not os.path.exists(path):
+        os.makedirs(path)
+
+    main(path)
