@@ -18,6 +18,9 @@ class Point:
             return colors[0]
         return colors[1] if self.classification else colors[2]
 
+    def apply_classification(self, classification_split):
+        self.classification = self.x > classification_split[0] and self.y < classification_split[1]
+
     @classmethod
     def create_random(cls, bounds, rounding=3):
         rand_x = round(random.uniform(bounds[0][0], bounds[0][1]), rounding)
