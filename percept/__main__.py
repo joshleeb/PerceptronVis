@@ -21,6 +21,14 @@ def generate_class_boundary_line(bounds):
     )
 
 
+def save_plot(path, iteration, weights, class_boundary, points):
+    plt = plot.generate(
+        'N={}, Iteration {}, W={}'.format(NUM_POINTS, iteration, weights),
+        class_boundary, weights, points, BOUNDS
+    )
+    plt.savefig('iteration{}.png'.format(iteration))
+
+
 def main():
     points = point.generate_points(NUM_POINTS, BOUNDS)
     class_boundary = generate_class_boundary_line(BOUNDS)
@@ -31,6 +39,11 @@ def main():
     for pt in points:
         pt.apply_classification(class_boundary)
 
+    save_plot(
+        'iteration{}'.format(iteration), iteration, percept.get_weights(),
+        class_boundary, points
+    )
+
     # As long as the perceptron is not perfectly classifying points, keep
     # training with training data.
     while not perceptron.is_classified(percept, points):
@@ -39,13 +52,10 @@ def main():
         for pt in points:
             percept.train(int(pt.classification), pt.x, pt.y)
 
-        weights = percept.get_weights()
-
-        plt = plot.generate(
-            'N={}, Iteration {}, W={}'.format(NUM_POINTS, iteration, weights),
-            class_boundary, weights, points, BOUNDS
+        save_plot(
+            'iteration{}'.format(iteration), iteration, percept.get_weights(),
+            class_boundary, points
         )
-        plt.savefig('iteration{}.png'.format(iteration))
 
 
 if __name__ == '__main__':
