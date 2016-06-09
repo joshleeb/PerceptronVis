@@ -13,22 +13,25 @@ class Point:
     def __str__(self):
         return self.__repr__()
 
-    def get_color(self, colors):
-        if self.classification is None:
-            return colors[0]
-        return colors[1] if self.classification else colors[2]
-
-    def apply_classification(self):
-        # Classification split assumed to be y=x.
-        # TODO: Use random classification split passed in.
+    # TODO: Apply classifications from class_boundary.
+    def apply_classification(self, class_boundary):
+        '''
+        Applies the classification rule to the point.
+        '''
         self.classification = self.y >= self.x
 
     @classmethod
-    def create_random(cls, bounds, rounding=3):
-        rand_x = round(random.uniform(bounds[0][0], bounds[0][1]), rounding)
-        rand_y = round(random.uniform(bounds[1][0], bounds[1][1]), rounding)
+    def create_random(cls, bounds):
+        '''
+        Creates a point with random coordinates within the specified bounds.
+        '''
+        rand_x = round(random.uniform(bounds[0][0], bounds[0][1]), 3)
+        rand_y = round(random.uniform(bounds[1][0], bounds[1][1]), 3)
         return Point(rand_x, rand_y)
 
 
 def generate_points(n, bounds):
+    '''
+    Generates a list of n points with random coordinates.
+    '''
     return [Point.create_random(bounds) for i in range(n)]

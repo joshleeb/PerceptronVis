@@ -1,73 +1,57 @@
-import matplotlib.lines as lines
-import matplotlib.pyplot as plt
 import perceptron
+import plot
 import point
 import random
 import time
 
 NUM_POINTS = 50
 BOUNDS = ((-1, 1), (-1, 1))
-COLOR_CLASSIFICATIONS = [
-    'black',    # Unclassified
-    'blue',     # Classified True (1)
-    'red'       # Classified False (0)
-]
 
 
 # TODO: Generate random classification split
-def generate_classification_split_line(bounds):
+def generate_class_boundary_line(bounds):
+    '''
+    Generates a classification boundary to be used on the randomly places
+    points before the perceptron is trained.
+    '''
     return (-1, -1), (1, 1)
 
 
-def generate_line(ax, p0, p1, color='black', style='-'):
-    x0, y0 = p0
-    x1, y1 = p1
-    gradient = (y0 - y1) / (x0 - x1)
-    intercept = y1 - gradient * x1
-    x = ax.get_xlim()
-    data_y = [x[0] * gradient + intercept, x[1] * gradient + intercept]
-    return lines.Line2D(x, data_y, color=color, linestyle=style)
+def classification_rule(point):
+    '''
+    Classification rule to be used to classify the random points before the
+    perceptron is trained.
+    '''
+    return point.y >= point.x
 
 
 def main():
-    random.seed(int(time.time() * 10**6))
     points = point.generate_points(NUM_POINTS, BOUNDS)
-    classification_split = generate_classification_split_line(BOUNDS)
-    percept = perceptron.Perceptron(0.25, 0.50, -0.50)
-    iteration = 1
+    class_boundary = generate_class_boundary_line(BOUNDS)
+    percept = perceptron.Perceptron()
+    iteration = 0
 
+    # Apply classification to randomply places points.
     for pt in points:
-        pt.apply_classification()
+        pt.apply_classification(classification_rule)
 
+    # As long as the perceptron is not perfectly classifying points, keep
+    # training with training data.
     while not perceptron.is_classified(percept, points):
+        iteration += 1
+
         for pt in points:
             percept.train(int(pt.classification), pt.x, pt.y)
 
-        boundary_fn = percept.get_plot_fn()
+        weights = percept.get_weights()
 
-        fig, ax = plt.subplots(figsize=(8, 8))
-
-        ax.set_xlim(BOUNDS[0])
-        ax.set_ylim(BOUNDS[1])
-        ax.set_title('N={}, Iteration {}, W={}'.format(
-            NUM_POINTS, iteration, percept.get_weights()
-        ))
-
-        ax.add_line(generate_line(
-            ax, classification_split[0], classification_split[1], 'cyan', '--'
-        ))
-        ax.add_line(generate_line(ax, (0, boundary_fn(0)), (1, boundary_fn(1))))
-
-        ax.scatter(
-            [p.x for p in points], [p.y for p in points],
-            c=[p.get_color(COLOR_CLASSIFICATIONS) for p in points], s=30
+        plt = plot.generate(
+            'N={}, Iteration {}, W={}'.format(NUM_POINTS, iteration, weights),
+            class_boundary, weights, points, BOUNDS
         )
-
         plt.savefig('iteration{}.png'.format(iteration))
-        iteration += 1
-
-    print(iteration)
 
 
 if __name__ == '__main__':
+    random.seed(int(time.time() * 10**6))
     main()
