@@ -4,25 +4,21 @@ import point
 import random
 import time
 
-NUM_POINTS = 50
+NUM_POINTS = 100
 BOUNDS = ((-1, 1), (-1, 1))
 
 
-# TODO: Generate random classification split
 def generate_class_boundary_line(bounds):
     '''
     Generates a classification boundary to be used on the randomly places
     points before the perceptron is trained.
     '''
-    return (-1, -1), (1, 1)
-
-
-def classification_rule(point):
-    '''
-    Classification rule to be used to classify the random points before the
-    perceptron is trained.
-    '''
-    return point.y >= point.x
+    return (
+        (round(random.uniform(bounds[0][0], bounds[0][1]), 3),
+        round(random.uniform(bounds[0][0], bounds[0][1]), 3)),
+        (round(random.uniform(bounds[0][0], bounds[0][1]), 3),
+        round(random.uniform(bounds[0][0], bounds[0][1]), 3))
+    )
 
 
 def main():
@@ -33,7 +29,7 @@ def main():
 
     # Apply classification to randomply places points.
     for pt in points:
-        pt.apply_classification(classification_rule)
+        pt.apply_classification(class_boundary)
 
     # As long as the perceptron is not perfectly classifying points, keep
     # training with training data.

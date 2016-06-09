@@ -13,12 +13,12 @@ class Point:
     def __str__(self):
         return self.__repr__()
 
-    # TODO: Apply classifications from class_boundary.
     def apply_classification(self, class_boundary):
         '''
         Applies the classification rule to the point.
         '''
-        self.classification = self.y >= self.x
+        class_fn = generate_class_fn(class_boundary)
+        self.classification = self.y >= class_fn(self.x)
 
     @classmethod
     def create_random(cls, bounds):
@@ -35,3 +35,16 @@ def generate_points(n, bounds):
     Generates a list of n points with random coordinates.
     '''
     return [Point.create_random(bounds) for i in range(n)]
+
+
+def generate_class_fn(bounds):
+    '''
+    Generates a function used to classify the generated points. The function
+    returned is the equation of the class boundary points specified.
+    '''
+    x0, y0, x1, y1 = bounds[0][0], bounds[0][1], bounds[1][0], bounds[1][1]
+    gradient = (y0 - y1) / (x0 - x1)
+
+    def fn(x):
+        return gradient * (x - x0) + y0
+    return fn
