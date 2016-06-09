@@ -18,8 +18,10 @@ class Point:
             return colors[0]
         return colors[1] if self.classification else colors[2]
 
-    def apply_classification(self, classification_split):
-        self.classification = self.x > classification_split[0] and self.y < classification_split[1]
+    def apply_classification(self):
+        # Classification split assumed to be y=x.
+        # TODO: Use random classification split passed in.
+        self.classification = self.y > self.x
 
     @classmethod
     def create_random(cls, bounds, rounding=3):
