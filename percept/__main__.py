@@ -5,9 +5,13 @@ import point
 import random
 import time
 
-BOUNDS = ((-1, 1), (-1, 1))
-COLOR_CLASSIFICATIONS = ['black', 'blue', 'red']
 NUM_POINTS = 50
+BOUNDS = ((-1, 1), (-1, 1))
+COLOR_CLASSIFICATIONS = [
+    'black',    # Unclassified
+    'blue',     # Classified True (1)
+    'red'       # Classified False (0)
+]
 
 
 # TODO: Generate random classification split
@@ -29,14 +33,16 @@ def main():
     random.seed(int(time.time() * 10**6))
     points = point.generate_points(NUM_POINTS, BOUNDS)
     classification_split = generate_classification_split_line(BOUNDS)
-    percept = perceptron.Perceptron(-0.5, -0.5, 0.5)
+    percept = perceptron.Perceptron()
+    iteration = 1
 
     for pt in points:
         pt.apply_classification()
 
-    for i in range(100):
+    while not perceptron.is_classified(percept, points):
         for pt in points:
             percept.train(int(pt.classification), pt.x, pt.y)
+        iteration += 1
 
     boundary_fn = percept.get_plot_fn()
 

@@ -48,3 +48,13 @@ class Perceptron:
         def fn(x):
             return -self.w1 / self.w2 * x - self.w0 / self.w2
         return fn
+
+
+def is_classified(percept, points):
+    '''
+    Checks if all points are correctly classified by the perceptron.
+    '''
+    for pt in points:
+        if percept.predict(pt.x, pt.y) != int(pt.classification):
+            return False
+    return True
