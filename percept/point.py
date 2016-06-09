@@ -21,7 +21,7 @@ class Point:
     def apply_classification(self):
         # Classification split assumed to be y=x.
         # TODO: Use random classification split passed in.
-        self.classification = self.y > self.x
+        self.classification = self.y >= self.x
 
     @classmethod
     def create_random(cls, bounds, rounding=3):
