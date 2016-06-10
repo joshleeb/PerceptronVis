@@ -6,13 +6,14 @@ Generates nodes places at random locations in a [-1, 1], [-1, 1] region and then
 
 The dotted cyan line is the actual classification boundary and the black line is the perceptron's boundary at a given iteration.
 
-<img src="/plots/iteration0.png" width="300" height="300" />
-<img src="/plots/iteration1.png" width="300" height="300" />
-<img src="/plots/iteration2.png" width="300" height="300" />
+<img src="/plots/iteration0.png" width="400" height="400" />
+<img src="/plots/iteration1.png" width="400" height="400" />
+<img src="/plots/iteration2.png" width="400" height="400" />
+<img src="/plots/iteration3.png" width="400" height="400" />
 
 and so on until the perceptron correctly classifies the nodes.
 
-<img src="/plots/iteration7.png" width="300" height="300" />
+<img src="/plots/iteration7.png" />
 
 ## Usage
     python3 percept <directory>
